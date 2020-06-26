@@ -1,0 +1,349 @@
+To get all the filenames from Batch query to check availability:
+----------------------------------------------------------------
+
+for i in `awk '{print $5}' ~sahook/test | awk -F'%' '{print $1}'`; do ls -ltr $i'*'.dat; done
+
+To remove the last 2 characters from each line in a file
+---------------------------------------------------------
+
+sed  's/..$//' file
+
+To add a character in the beginning of a line
+------------------------------------------------
+
+sed -i -e 's_.*_#&_' input.dat
+awk '{ printf "#"; print }' <filename>
+
+
+To add a character in the end of a line
+------------------------------------------------
+sed "s/$/',/g" <filename>
+
+To remove all leading and trailing whitespace /tab from end of each line:
+-------------------------------------------------------------------
+
+cat test3 | sed 's/^[ \t]*//;s/[ \t]*$//'
+
+The command needed while to add comma or inverted while doing OST bounce
+-------------------------------------------------------------------------
+
+
+sed 's/0//' test3 | sed 's/^[ \t]*//;s/[ \t]*$//' | sed -e "s_.*_'&_" | sed "s/$/',/g"
+
+To add comma and inverted comma to make it run in sql
+-----------------------------------------------------
+
+sed "s/.*/'&',/"
+
+
+To find files greater than 1 GB
+--------------------------------
+
+
+find . -type f -size +1048576
+
+To find the columns which are bigger than a particular length
+---------------------------------------------------------------
+
+
+awk -F',' '{print  $2}' file | awk '{ if ( length > 38 ) print length, $0}'
+
+TO find the rows which contain more than a specific number of columns in a flat file.
+----------------------------------------------------------------------------------------
+
+
+ awk -F'|' '{ if (NF>29) print NR , NF}' test2
+
+
+How to replace a number / pattern in a line which contains only a particular pattern (not in all the lines.)
+----------------------------------------------------------------------------------------------------------------
+
+sed '/TAIL/s/1506677/1506672/' file_modi > orig_file
+
+
+TO BRING EVERYTHING TO ONE LINE
+--------------------------------
+
+ tr '\n' ' ' < temp2
+
+
+HOW TO SEE THE COMPLETE COMMAND FOR THE PROCESS IN SOLARIS
+-----------------------------------------------------------
+
+/usr/ucb/ps -auxwww
+pargs [process id]
+
+pargs -a [pid]
+pargs -l [pid]
+
+
+To check Special characters
+-----------------------------
+
+
+1> vi -b <filename>   -> to show unreadable chars
+
+ > :set list      -> to see EOL. tabs , spaces
+
+ 
+
+2> Directed the few lines (including the faulty line in ABC.dat_ORIG ) to temp (temp1, temp2) file and viewed through "od -bc". Could not see any fault with the 7th column. (as far as the presence of special character is concerned)
+
+ 
+
+>od -c temp1
+0000000   L   N   |   X   M   A   G   N   A   T       |   M   |   M   A
+0000020   G   N   A       T   R   U   S   T   |   |   n   |   C   M   N
+0000040   T   R   G   B                                      \n
+0000056
+> od -c temp2
+0000000   L   N   |   X   M   A   G   N   E   T       |   M   |   M   A
+0000020   G   N   E   T       L   I   M   I   T   E   D   |   |   n   |
+0000040   C   M   G   T   E   G   B
+0000060  \n
+0000061
+
+ 
+
+May be next time it occurs, if the back up file could be stored, we can check further if it is a problem with bcp script.
+
+I will check and let you know, if I get something.
+
+
+How To delete blank lines using sed
+-------------------------------------
+
+sed '/^\s*$/d'
+
+sed '/^[ \t]*/d' <file name>
+
+
+To check which line has a greater length than the length defined in the table structure
+---------------------------------------------------------------------------------------
+
+awk -F'|' '{print $1}' A.DAT | awk '{ if ( length > 4 ) print length, $0}'
+awk -F'|' '{print $2}' B.DAT | awk '{ if ( length > 3  ) print length, $0}'
+awk -F'|' '{print $3}' C.DAT | awk '{ if ( length > 1 ) print length, $0}'
+awk -F'|' '{print $4}' D.DAT | awk '{ if ( length > 26 ) print length, $0}'
+awk -F'|' '{print $5}' E.DAT | awk '{ if ( length > 4 ) print length, $0}'
+awk -F'|' '{print $6}' F.DAT | awk '{ if ( length > 4 ) print length, $0}'
+awk -F'|' '{print $7}' G.DAT | awk '{ if ( length >1 ) print length, $0}'
+awk -F'|' '{print $8}' H.DAT | awk '{ if ( length >200 ) print length, $0}'
+awk -F'|' '{print $9}' I.DAT | awk '{ if ( length >1 ) print length, $0}'
+
+
+
+AUTOSYS JOB CODES
+-----------------
+
+    NONE        = 0
+    RUNNING     = 1
+    UNDEF_2     = 2
+    STARTING    = 3
+    SUCCESS     = 4
+    FAILURE     = 5
+    TERMINATED  = 6
+    ON_ICE      = 7
+    INACTIVE    = 8
+    ACTIVATED   = 9
+    RESTART     = 10
+    ON_HOLD     = 11
+    QUEUE_WAIT  = 12
+    UNDEF_13    = 13
+    REFRESH_DEP = 14
+    REFRESH_FW  = 15
+
+
+
+To Extract NON NULL fields in a file:
+---------------------------------------
+
+awk -F'|' '{if ( $NF!=null ) print $0 }' file.dat
+
+
+
+find /data/sgl_xfer/pub/tdw/gds/mnh -type f -size +200000000c  -print| sort -n -r |head -n 10
+find /data/sgl_xfer/pub/tdw/intl -type f -size +200000000c  -print| sort -n -r |head -n 10 
+find /data/sgl_xfer/pub/tdw/gfx/ldn -type f -size +200000000c  -print| sort -n -r |head -n 10
+find /data/sgl_xfer/pub/tdw/gfx/mnh -type f -size +200000000c  -print| sort -n -r |head -n 10
+find /data/sgl_xfer/pub/tdw/loaniq -type f -size +200000000c  -print| sort -n -r |head -n 10 
+
+
+
+
+How to identify and truncate partition
+----------------------------------------
+
+
+select distinct partition_management.get_partition_name(BUSINESS_DATE) from TABLE where BUSINESS_DATE<'28-JUL-2014' and BUSINESS_DATE not in (
+'30-JUN-2014',
+'30-MAY-2014',
+'02-JUN-2014',
+'30-APR-2014',
+'31-MAR-2014',
+'28-FEB-2014',
+'31-JAN-2014',
+'31-DEC-2013',
+'29-NOV-2013',
+'31-OCT-2013',
+'30-SEP-2013',
+'30-AUG-2013',
+'31-JUL-2013',
+'28-JUN-2013'
+)
+
+ALTER TABLE <table name> TRUNCATE PARTITION <Partition name>
+
+
+How to add d to the end of all the lines in a file to use it is sed
+-------------------------------------------------------------------
+
+sort -nr |  sed 's/$/d;/' | tr "\n" " " 
+
+
+sed '249544d; 199154d; 199152d; 190693d; 185050d; 185044d; $d' file.dat > file.dat_Mdfd
+
+
+
+
+autorep -qj boe% | grep run_calendar | tr -s " "  | cut -d ":" -f 2 | sort | uniq
+
+
+
+
+Autosys jobs with exclude calender/run calender
+-------------------------------------------------
+
+
+ autorep -j -q flm% | grep -B7 exclude_calendar | grep -e exclude_calendar -e "------" | sed 's_/\* -----------------__' | sed 's_ ----------------- \*/__'
+
+How to type tab / control M characters to grep in linux/unix
+------------------------------------------------------------
+
+Tab - \t or control+v+tab
+^? - control+v and then backspace
+^M - contol+v+m
+
+
+
+Autosys jobs running on sunday list:
+------------------------------------
+
+
+
+autorep -j -q flm% | grep -B6 "days_of_week: all" | grep "\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-" | awk -F'-----------------' '{print $2}'
+autorep -j -q flm% | grep -B6 "days_of_week: tu,we,th,fr,sa,su" | grep "\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-" | awk -F'-----------------' '{print $2}'
+
+
+
+
+
+How to find the space occupied by all the files generated on a specific day:
+
+By using dates in the name of the file :
+
+bash-3.2$ for i in 19 20 21 22 25 26 27
+> do
+>  find /home/lpsprd/extracts/ -type f -name "*201911${i}*" -printf '%s\n'  2>/dev/null | awk '{Total=Total+$1}END{print Total/1073741824 " GB"}'
+> done
+2.63425 GB
+2.63939 GB
+2.7703 GB
+3.32449 GB
+2.58086 GB
+2.63472 GB
+1.85383 GB
+
+
+By using the mtime:
+
+bash-3.2$ for i in 1 2 3 4 5 6 7 8; do  find /home/lpsprd/extracts/ -type f -mtime $i -printf '%s\n'  2>/dev/null | awk '{Total=Total+$1}END{print Total/1073741824 " GB"}'; done
+2.44253 GB
+2.33247 GB
+1.22877 GB
+0.269623 GB
+2.25488 GB
+2.59902 GB
+3.37955 GB
+1.90636 GB
+
+
+
+
+
+#	Flm.prd job list for LPS command jobs excluding boxes and current ON_ICE status (machine: lon-lpsprd-app)
+	1. aq flm% | grep -B3 "machine: lon-lpsprd-app" |grep -v ".ecp."| grep "job_type: CMD" | grep -o "flm.*.lp1" | sort | uniq > job_prod_LPS_command
+	2. for i in `cat job_prod_LPS_command`; do [ `autostatus -j $i` == "ON_ICE" ] || echo $i >> job_prod_LPS_command_NOT_ice; done
+#count 473	
+
+#	Flm.prd job list for FDM command jobs excluding boxes and current ON_ICE status (machine: lon-tdwprd-app)
+	1. aq flm% | grep -B3 "machine: lon-tdwprd-app" |grep -v ".ecp."| grep "job_type: CMD" | grep -o "flm.*.lp1" | sort | uniq > job_prod_fdm_command
+	2. for i in `cat job_prod_fdm_command`; do [ `autostatus -j $i` == "ON_ICE" ] || echo $i >> job_prod_fdm_command_NOT_ice; done
+# count 125
+
+
+#	List of all boxes (FDM+LPS) excluding current ON_ICE boxes.
+	1. aq flm% | grep "job_type: BOX" | grep -v ".ecp." |awk '{print $2}' |sort | uniq > box_jobs_prod
+	2. for i in `cat box_jobs_prod`; do if [ `autostatus -j $i` != "ON_ICE" ]; then echo $i >> box_jobs_prod_NOT_ice; fi; done
+#count 243
+
+# Script to office a given set of jobs, sleep for 4 seconds and then on hold the job. Put the details of job status in a file named Jobs_OFF_ICED_ON_HELD
+bash-3.2$ for i in `cat <The filename you have saved the joblist in>`
+> do
+> if [ `autostatus -j $i` == "ON_ICE" ]
+> then
+> sendevent -E JOB_OFF_ICE -J $i
+> sleep 4
+> sendevent -E JOB_ON_HOLD -J $i
+> sleep 3
+> echo "`autostatus -j $i` ===> $i" > Jobs_OFF_ICED_ON_HELD
+> fi
+> done
+
+
+
+
+
+=========================
+Make a new column - addition of all number in rows
+
+bash-3.2$ cat test_num
+3 4 6 7
+55 88 99 4
+5 7 34 99
+44 3 6 2
+bash-3.2$ awk '{ acum=0; for(i=1;i<=NF;i++) acum+=$i} {print $0,acum}' test_num
+3 4 6 7 20
+55 88 99 4 246
+5 7 34 99 145
+44 3 6 2 55
+bash-3.2$
+
+==========================
+Make a new row- addition of all number in column
+
+bash-3.2$ cat test_num
+3 4 6 7
+55 88 99 4
+5 7 34 99
+44 3 6 2
+bash-3.2$ awk 'BEGIN{a=0;b=0;c=0;d=0} {a+=$1;b+=$2;c+=$3;d+=$4} {print $0} END{print a, b, c, d}' test_num
+3 4 6 7
+55 88 99 4
+5 7 34 99
+44 3 6 2
+107 102 145 112
+
+
+
+
+
+
+
+
+
+
+
+
+
+
